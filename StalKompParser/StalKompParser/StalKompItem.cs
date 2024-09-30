@@ -1,5 +1,5 @@
 ﻿using AngleSharp.Dom;
-using StalKompParser.StalKompParser.Models;
+using StalKompParser.StalKompParser.Models.DTO.Product.SearchProduct;
 using System;
 
 
@@ -16,9 +16,9 @@ namespace StalKompParser.StalKompParser.StalKompParser
             _url = url;
         }
 
-        public StalKompProduct TryParse()
+        public SearchProduct TryParse()
         {
-            return new StalKompProduct()
+            return new SearchProduct()
             {
                 Url = _url,
                 ProductTitle = GetProductTitle(),

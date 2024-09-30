@@ -1,6 +1,6 @@
 ﻿using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
-using StalKompParser.StalKompParser.Models;
+using StalKompParser.StalKompParser.Models.DTO.Product.SearchProduct;
 using System.ComponentModel;
 
 namespace StalKompParser.StalKompParser.StalKompParser
@@ -22,7 +22,7 @@ namespace StalKompParser.StalKompParser.StalKompParser
 
             return new StalKompProductPage(document, url);
         }
-        public StalKompProduct ParseProduct()
+        public SearchProduct ParseProduct()
         {
             var product = _document.QuerySelector(".summary") ??
                 throw new ArgumentException("Can't parse this page. Class .summary  was not present in the page");

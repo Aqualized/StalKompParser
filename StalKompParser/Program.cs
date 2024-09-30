@@ -2,6 +2,7 @@ using StalKompParser.StalKompParser.Configurations;
 using Serilog;
 using StalKompParser.StalKompParser.PageLoader;
 using StalKompParser.StalKompParser.StalKompParser;
+using StalKompParser.StalKompParser.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 

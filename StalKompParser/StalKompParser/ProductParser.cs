@@ -1,7 +1,10 @@
 using Microsoft.Extensions.Options;
 using StalKompParser.StalKompParser.Configurations;
-using StalKompParser.StalKompParser.Models;
-using StalKompParser.StalKompParser.Models.HttpModels;
+using StalKompParser.StalKompParser.Helpers;
+using StalKompParser.StalKompParser.Interfaces;
+using StalKompParser.StalKompParser.Models.DTO.Product.SearchProduct;
+using StalKompParser.StalKompParser.Models.DTO.Requests;
+using StalKompParser.StalKompParser.Models.DTO.Responses;
 using StalKompParser.StalKompParser.PageLoader;
 
 namespace StalKompParser.StalKompParser.StalKompParser;
@@ -16,29 +19,41 @@ public class ProductParser: IProductParser
         _pageLoader = pageLoader;
         _parserSettings = parserSettings;
     }
-    public async Task<List<StalKompResponse>> Parse(StalKompRequest request, CancellationToken token)
+    public async Task<List<SearchResponse>> ParseSearch(SearchRequest request, CancellationToken token)
     {
        List<string> phrases = request.SearchPhrases;
 
-        var listOfLists = await RunInParallelWithLimit(phrases, async phrase =>
+        var listOfLists = await ParallelHelper.RunInParallelWithLimit(phrases, async phrase =>
         {
-            return await ParsePhrase(phrase, token);
+            return await InternalParse(phrase, token);
         }, 5, token);
-    
+
         return listOfLists.SelectMany(responseList => responseList).ToList();
     }
 
-    private async Task<List<StalKompResponse>> ParsePhrase(string phrase, CancellationToken token)
+    public Task<List<DetailResponse>> ParseDetail(DetailRequest request, CancellationToken token)
     {
-        var responseList = new List<StalKompResponse>();
+        List<string> phrases = request.ProductLinks;
+
+        var listOfLists = await ParallelHelper.RunInParallelWithLimit(phrases, async phrase =>
+        {
+            return await InternalParse(phrase, token);
+        }, 5, token);
+
+        return listOfLists.SelectMany(responseList => responseList).ToList();
+    }
+
+    private async Task<List<SearchResponse>> InternalParse(string phrase, CancellationToken token)
+    {
+        var responseList = new List<SearchResponse>();
         ushort numberOfPage = 1;
         var catalogString = await _pageLoader.GetPageByPhrase(phrase, numberOfPage, token);
         if (string.IsNullOrEmpty(catalogString))
         {
             responseList.Add(
-                new StalKompResponse() 
+                new SearchResponse() 
                 {
-                    Searched = phrase, 
+                    Phrase = phrase, 
                     Products = [],
                     ErrorMessage = "Internal error handling catalog page loading"
                 }
@@ -49,9 +64,9 @@ public class ProductParser: IProductParser
         if (catalogPage is null)
         {
             responseList.Add(
-                new StalKompResponse() 
+                new SearchResponse() 
                 {
-                    Searched = phrase, 
+                    Phrase = phrase, 
                     Products = [],
                     ErrorMessage = "Internal error handling catalog page creation"
                 }
@@ -61,27 +76,27 @@ public class ProductParser: IProductParser
         var product = await ProductsParse(phrase, catalogPage, token);
         if (product is null || product.Count == 0)
         {
-            responseList.Add(new StalKompResponse()
+            responseList.Add(new SearchResponse()
             {
-                Searched = phrase,
+                Phrase = phrase,
                 Products = []
             });
             return responseList;
         }
 
-        responseList.Add(new StalKompResponse()
+        responseList.Add(new SearchResponse()
         {
-            Searched = phrase,
+            Phrase = phrase,
             Products = product
         });
 
         return responseList;
     }
-    private async Task<List<StalKompProduct>> ProductsParse(string phrase, StalKompListPage catalogPage, CancellationToken token)
+    private async Task<List<SearchProduct>> ProductsParse(string phrase, StalKompListPage catalogPage, CancellationToken token)
     {
         var productLinks = catalogPage.GetProductLinks();
 
-        return (await RunInParallelWithLimit(productLinks, async link =>
+        return (await ParallelHelper.RunInParallelWithLimit(productLinks, async link =>
         {
             var productString = await _pageLoader.GetPageByLink(link, token);
             if (productString is null)
@@ -89,30 +104,7 @@ public class ProductParser: IProductParser
                 
             var productPage = await StalKompProductPage.TryCreate(productString, link, token);
             return productPage?.ParseProduct();
-        }, 5, token)).Where(product => product is not null).Cast<StalKompProduct>().ToList();
+        }, 5, token)).Where(product => product is not null).Cast<SearchProduct>().ToList();
     }
-    private async Task<List<TResult>> RunInParallelWithLimit<TItem, TResult>(
-        IEnumerable<TItem> items, 
-        Func<TItem, Task<TResult>> taskFactory, 
-        int maxParallelism, 
-        CancellationToken token)
-    {
-        var semaphore = new SemaphoreSlim(maxParallelism);
-
-        var tasks = items.Select(async item =>
-        {
-            await semaphore.WaitAsync(token);
-            try
-            {
-                return await taskFactory(item);
-            }
-            finally
-            {
-                semaphore.Release();
-            }
-        }).ToList();
-
-        var results = await Task.WhenAll(tasks);
-        return results.ToList();
-    }
+    
 }

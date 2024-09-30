@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using StalKompParser.StalKompParser.Models.HttpModels;
-using StalKompParser.StalKompParser.StalKompParser;
+using StalKompParser.StalKompParser.Interfaces;
+using StalKompParser.StalKompParser.Models.DTO.Requests;
+using System.Threading;
 
 namespace StalKompParser.StalKompParser.Controllers
 {
-    [Route("api/StalKomp/products")]
+    [Route("api/product")]
     [ApiController]
     public class StalController : ControllerBase
     {
@@ -15,15 +16,40 @@ namespace StalKompParser.StalKompParser.Controllers
             _parser = parser;
         }
 
-        [HttpPost("parse")]
-        public async Task<IActionResult> GetCards([FromBody] StalKompRequest request)
+        [HttpPost("search")]
+        public async Task<IActionResult> PostSearch([FromBody] SearchRequest request)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                var response = await _parser.ParseSearch(request, HttpContext.RequestAborted);
+                return Ok(response);
             }
-            var response = await _parser.Parse(request, HttpContext.RequestAborted);
-            return Ok(response);
+            catch (OperationCanceledException)
+            {
+                return StatusCode(408, "Request timed out");
+            }
+        }
+
+        [HttpPost("details")]
+        public async Task<IActionResult> PostDetails([FromBody] SearchRequest request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                var response = await _parser.ParseDetail(request, HttpContext.RequestAborted);
+                return Ok(response);
+            }
+            catch (OperationCanceledException)
+            {
+                return StatusCode(408, "Request timed out");
+            }
         }
     }
 
