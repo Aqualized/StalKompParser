@@ -9,7 +9,7 @@ namespace StalKompParser.StalKompParser.Models.DTO.Requests
         public App App { get; set; }
 
         [Required(ErrorMessage = "CanLoadAttachments is required.")] //не работает просто на bool
-        public bool? CanLoadAttachments { get; set; }
+        public bool CanLoadAttachments { get; set; }
 
         [Required(ErrorMessage = "ProductLinks is required.")]
         public List<string> ProductLinks { get; set; }

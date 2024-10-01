@@ -6,22 +6,22 @@ using StalKompParser.StalKompParser.StalKompParser.Pages.PageFactories;
 
 namespace StalKompParser.StalKompParser.StalKompParser.Pages
 {
-    public class StalKompProductPage : AbstractPage<DetailProduct>, IParseDetailProduct
+    public class ProductPage : AbstractPage<ProductPage,DetailProduct>, IParseDetailProduct
     {
         private readonly IElement _item;
-        public StalKompProductPage(PageCreationContext context)
+        public ProductPage(PageCreationContext context)
             :base(context)
         {
-            var product = _context.Document.QuerySelector(".product-gallery-summary") ??
+            var product = _context.Document!.QuerySelector(".product-gallery-summary") ??
                 throw new ArgumentException("Can't parse this page. Class .product-gallery-summary  was not present in the page");
+            if (_context.CanLoadAttachments is null)
+                throw new NullReferenceException("CanLoadAttachments was null");
             _item = product;
         }
 
-        public override async Task<List<DetailProduct>> Parse()
+        public override async Task<DetailProduct> Parse()
         {
-            return new List<DetailProduct>
-            {
-                new DetailProduct()
+            return new DetailProduct()
                 {
                     Code = GetCode(),
                     Name = GetName(),
@@ -33,8 +33,8 @@ namespace StalKompParser.StalKompParser.StalKompParser.Pages
                     CatalogPath = GetCatalogPath(),
                     Properties = GetPropeties(),
                     Images = GetImages(),
-                    Attachments = _context.CanLoadAttachments ? GetAttachments() : []
-                }
+                    Attachments = (bool)_context.CanLoadAttachments ? GetAttachments() : [] 
+                    //_context.CanLoadAttachments is always not null in this state, because of constructor
             };
         }
 

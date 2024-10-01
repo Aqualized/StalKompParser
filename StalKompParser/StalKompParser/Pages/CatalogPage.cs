@@ -6,9 +6,9 @@ using StalKompParser.StalKompParser.StalKompParser.Pages.PageFactories;
 
 namespace StalKompParser.StalKompParser.StalKompParser.Pages
 {
-    public class StalKompListPage : AbstractPage<SearchProduct>
+    public class CatalogPage : AbstractPage<CatalogPage,List<SearchProduct>>
     {
-        public StalKompListPage(PageCreationContext context)
+        public CatalogPage(PageCreationContext context)
             : base(context)
         { 
         }
@@ -17,7 +17,7 @@ namespace StalKompParser.StalKompParser.StalKompParser.Pages
         {
             List<SearchProduct> resultList = [];
 
-            var productsList = _context.Document.QuerySelector("ul.products");
+            var productsList = _context.Document!.QuerySelector("ul.products");
             if (productsList != null)
             {
                 var productItems = productsList.QuerySelectorAll("li.product");

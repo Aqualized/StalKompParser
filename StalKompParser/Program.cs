@@ -7,7 +7,6 @@ using StalKompParser.StalKompParser.StalKompParser.Pages.PageFactories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// add configuration 
 var config = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")
     .AddEnvironmentVariables()
@@ -26,11 +25,8 @@ builder.Services.AddControllers();
 // configure settings
 builder.Services.Configure<ParserSettings>(config.GetSection(nameof(ParserSettings)));
 
-// add http client factory with proxies 
+// add http client
 builder.Services.AddHttpClient();
-
-//add mainFactory
-builder.Services.AddScoped<IMainPageFactory, MainFactory>();
 
 // add scoped 
 builder.Services.AddScoped<IPageLoader, PageLoader>();

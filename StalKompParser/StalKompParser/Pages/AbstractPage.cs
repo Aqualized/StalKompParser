@@ -5,23 +5,26 @@ using StalKompParser.StalKompParser.StalKompParser.Pages.PageFactories;
 
 namespace StalKompParser.StalKompParser.StalKompParser.Pages
 {
-    abstract public class AbstractPage<T> where T : IProduct
+    abstract public class AbstractPage<TThisClass,TParseOutput>
     {
         protected readonly PageCreationContext _context;
         public AbstractPage(PageCreationContext context)
         {
             _context = context;
         }
-        public abstract Task<List<T>> Parse();
-        //public static async Task<AbstractPage?> TryCreate(string pageHtml, CancellationToken token)
-        //{
+        public static async Task<TThisClass> TryCreate(PageCreationContext context, IPageFactory<TThisClass> pageFabric, CancellationToken token)
+        {
+            if (context.PageHtml is null)
+                return default;
 
-        //    var parser = new HtmlParser();
-        //    var document = await parser.ParseDocumentAsync(pageHtml, token);
+            var htmlParser = new HtmlParser();
+            var document = await htmlParser.ParseDocumentAsync(context.PageHtml);
+            if (document is null)
+                return default;
 
-        //    return new AbstractPage(document);//тут фабрика работает и должна выдасть определенный клласс?
-        //}
-
-
+            context.Document = document;
+            return pageFabric.Create(context);
+        }
+        public abstract Task<TParseOutput> Parse();
     }
 }
