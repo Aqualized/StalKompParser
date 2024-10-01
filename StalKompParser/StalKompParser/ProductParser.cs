@@ -118,8 +118,8 @@ public class ProductParser : IProductParser
             CanLoadAttachments = canLoadAttachments,
         };
 
-        var page = await AbstractPage<TPageClass, TParserOutput>.TryCreate(context, PageFactory, token); //почему это работает
-        // а TPageClass.TryCreate нет? -_- чот я не поняв
+        var page = await AbstractPage<TPageClass, TParserOutput>.TryCreate(context, PageFactory, token); //РїРѕС‡РµРјСѓ СЌС‚Рѕ СЂР°Р±РѕС‚Р°РµС‚
+        // Р° TPageClass.TryCreate РЅРµС‚? -__- С‡РѕС‚ РїРѕРґ РІРµС‡РµСЂ РЅРµ РІРґСѓРїР»РёР»
         if (page == null)
         {
             return createEmpty();
