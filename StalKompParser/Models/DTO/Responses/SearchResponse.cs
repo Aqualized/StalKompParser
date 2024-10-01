@@ -4,7 +4,7 @@
     {
         public App App { get; set; } = new();
 
-        public Variants Variants { get; set; } = new();
+        public List<Variant> Variants { get; set; } = new();
 
     }
 }

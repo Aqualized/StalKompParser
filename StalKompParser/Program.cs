@@ -3,6 +3,7 @@ using Serilog;
 using StalKompParser.StalKompParser.PageLoader;
 using StalKompParser.StalKompParser.StalKompParser;
 using StalKompParser.StalKompParser.Interfaces;
+using StalKompParser.StalKompParser.StalKompParser.Pages.PageFactories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,11 +29,14 @@ builder.Services.Configure<ParserSettings>(config.GetSection(nameof(ParserSettin
 // add http client factory with proxies 
 builder.Services.AddHttpClient();
 
-// add parser
-builder.Services.AddScoped<IProductParser, ProductParser>();
+//add mainFactory
+builder.Services.AddScoped<IMainPageFactory, MainFactory>();
 
 // add scoped 
 builder.Services.AddScoped<IPageLoader, PageLoader>();
+
+// add parser
+builder.Services.AddScoped<IProductParser, ProductParser>();
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

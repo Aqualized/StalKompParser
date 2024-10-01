@@ -5,7 +5,7 @@ namespace StalKompParser.StalKompParser.Interfaces
 {
     public interface IProductParser
     {
-        public Task<List<SearchResponse>> ParseSearch(SearchRequest request, CancellationToken token);
-        public Task<List<DetailResponse>> ParseDetail(DetailRequest request, CancellationToken token);
+        public Task<SearchResponse> ParseSearch(SearchRequest request, CancellationToken token);
+        public Task<DetailResponse> ParseDetail(DetailRequest request, CancellationToken token);
     }
 }

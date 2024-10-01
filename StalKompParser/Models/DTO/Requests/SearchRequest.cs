@@ -5,11 +5,11 @@ namespace StalKompParser.StalKompParser.Models.DTO.Requests
     public class SearchRequest
     {
         [Required(ErrorMessage = "RequestApp is required.")]
-        public App App { get; set; } = new();
+        public App App { get; set; }
 
         [Required(ErrorMessage = "At least one phrase is required.")]
         [MinLength(1)]
-        public List<string> SearchPhrases { get; set; } = [];
+        public List<string> SearchPhraseList { get; set; }
 
         [Range(1, 100, ErrorMessage = "MaxProductsCount must be between 1 and 100.")]
         public uint MaxProductsCount { get; set; } = 15;

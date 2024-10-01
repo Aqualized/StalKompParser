@@ -1,9 +1,11 @@
-﻿namespace StalKompParser.StalKompParser.Models.DTO.Product.DetailProduct
+﻿using StalKompParser.StalKompParser.Models.DTO.Product.Search;
+
+namespace StalKompParser.StalKompParser.Models.DTO.Product.DetailProduct
 {
     public class DetailProduct : SearchProduct
     {
-        public Properties Properties { get; set; } = new();
-        public Images Images { get; set; } = new();
-        public Attachments Attachments { get; set; } = new();
+        public List<Property> Properties { get; set; } = [];
+        public List<Image> Images { get; set; } = [];
+        public List<Attachment> Attachments { get; set; } = [];
     }
 }

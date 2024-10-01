@@ -35,7 +35,7 @@ namespace StalKompParser.StalKompParser.Controllers
         }
 
         [HttpPost("details")]
-        public async Task<IActionResult> PostDetails([FromBody] SearchRequest request)
+        public async Task<IActionResult> PostDetails([FromBody] DetailRequest request)
         {
             try
             {
