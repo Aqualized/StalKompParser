@@ -1,9 +1,7 @@
-using StalKompParser.StalKompParser.Configurations;
 using Serilog;
-using StalKompParser.StalKompParser.PageLoader;
-using StalKompParser.StalKompParser.StalKompParser;
-using StalKompParser.StalKompParser.Interfaces;
-using StalKompParser.StalKompParser.StalKompParser.Pages.PageFactories;
+using StalKompParser.StalKompParser.Application.Services.StalKompParser;
+using StalKompParser.StalKompParser.Common.PageLoader;
+using StalKompParser.StalKompParser.Application.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 

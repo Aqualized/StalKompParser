@@ -1,0 +1,8 @@
+﻿namespace StalKompParser.StalKompParser.Common.DTO.Product.DetailProduct
+{
+    public class Image
+    {
+        public string Format { get; set; } = string.Empty;
+        public string Base64Content { get; set; } = string.Empty;
+    }
+}
