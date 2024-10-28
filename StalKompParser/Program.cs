@@ -60,4 +60,6 @@ app.UseCors(builder =>
 
 app.MapControllers();
 
+app.Urls.Add("http://0.0.0.0:5003");
+
 app.Run();
