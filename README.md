@@ -3,7 +3,7 @@
 TargetFramework: net8.0
 
 Test:
-http://0.0.0.0:5003/api/product/search
+https://0.0.0.0:5003/api/product/search
 
 {
   "app": {
