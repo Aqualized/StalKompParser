@@ -1,4 +1,4 @@
-# StalKompParser
+# StalParser
 
 TargetFramework: net8.0
 
